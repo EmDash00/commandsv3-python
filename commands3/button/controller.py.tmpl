@@ -1,0 +1,107 @@
+"""{spec.module_doc}"""
+
+from __future__ import annotations
+
+from typing import SupportsFloat, SupportsIndex, SupportsInt
+
+from wpilib import GenericHID, {spec.controller_class}
+from commands3.button import CommandGenericHID
+from commands3.event_loop import EventLoop
+from commands3.scheduler import Scheduler
+
+Axis = {spec.controller_class}.Axis
+Button = {spec.controller_class}.Button
+RumbleType = GenericHID.RumbleType
+
+
+class {spec.wrapper_class}:
+    """Command-based wrapper around :class:`{spec.controller_class}`."""
+
+    def __init__(
+        self,
+        controller: {spec.controller_class} | SupportsInt | SupportsIndex,
+        *,
+        scheduler: Scheduler | None = None,
+    ) -> None:
+        """Wrap a controller instance or Driver Station port.
+
+        :param controller: Controller object or Driver Station port index.
+        :param scheduler: Scheduler for bound commands; defaults to the
+            default scheduler.
+        """
+        scheduler = scheduler if scheduler is not None else Scheduler.get_default()
+        self._default_loop = scheduler.get_default_event_loop()
+        if isinstance(controller, {spec.controller_class}):
+            self._controller = controller
+        else:
+            self._controller = {spec.controller_class}(int(controller))
+        self._hid = CommandGenericHID(
+            self._controller.get_hid(), scheduler=scheduler
+        )
+
+    def _event_loop(self, loop: EventLoop | None) -> EventLoop:
+        """Use the requested loop or this wrapper scheduler's default."""
+        return self._default_loop if loop is None else loop
+
+    def get_hid(self) -> CommandGenericHID:
+        """Get the command-based HID wrapper."""
+        return self._hid
+
+    @property
+    def hid(self) -> CommandGenericHID:
+        """The command-based HID wrapper."""
+        return self._hid
+
+    def get_controller(self) -> {spec.controller_class}:
+        """Get the wrapped controller."""
+        return self._controller
+
+    @property
+    def controller(self) -> {spec.controller_class}:
+        """The wrapped controller."""
+        return self._controller
+
+    def button(
+        self, button: Button | SupportsInt | SupportsIndex,
+        inverted: bool = False, loop: EventLoop | None = None,
+    ):
+        """Create a trigger for a held button.
+
+        :param button: Button enum member or button index.
+        :param inverted: Whether to invert the trigger.
+        :param loop: Event loop; defaults to this scheduler's default loop.
+        """
+        return self._hid.button(
+            int(button), inverted, self._event_loop(loop)
+        )
+
+    def axis_greater_than(
+        self, axis: Axis | SupportsInt | SupportsIndex, threshold: float,
+        loop: EventLoop | None = None,
+    ):
+        """Create a trigger active above an axis threshold.
+
+        :param axis: Axis enum member or axis index.
+        :param threshold: Threshold the axis must exceed.
+        :param loop: Event loop; defaults to this scheduler's default loop.
+        """
+        return self._hid.axis_greater_than(
+            int(axis), threshold, self._event_loop(loop)
+        )
+
+    def axis_less_than(
+        self, axis: Axis | SupportsInt | SupportsIndex, threshold: float,
+        loop: EventLoop | None = None,
+    ):
+        """Create a trigger active below an axis threshold.
+
+        :param axis: Axis enum member or axis index.
+        :param threshold: Threshold the axis must be below.
+        :param loop: Event loop; defaults to this scheduler's default loop.
+        """
+        return self._hid.axis_less_than(
+            int(axis), threshold, self._event_loop(loop)
+        )
+
+{button_methods}
+{axis_methods}

@@ -1,0 +1,43 @@
+    def get_{axis.stem}(self) -> float:
+        """Read the {axis.label}.
+
+        {axis.positive_direction} is positive. A deadband of 0.1 is applied by default.
+        Use :meth:`{spec.controller_class}.{axis.deadband_setter}` to change it.
+
+        :returns: Current axis value.
+        """
+        return self._controller.{axis.getter}()
+
+    @property
+    def {axis.stem}(self) -> float:
+        """The current value of the {axis.label}."""
+        return self._controller.{axis.getter}()
+
+    def set_{axis.stem}_deadband(
+        self, deadband: SupportsFloat | SupportsIndex
+    ) -> None:
+        """Set the deadband for the {axis.label}.
+
+        :param deadband: Deadband value, clamped by the controller API.
+        """
+        self._controller.{axis.deadband_setter}(deadband)
+
+    def {axis.stem}_greater_than(
+        self, threshold: float, loop: EventLoop | None = None
+    ):
+        """Create a trigger when the {axis.label} exceeds a threshold.
+
+        :param threshold: Minimum value for activation.
+        :param loop: Event loop; defaults to this scheduler's default loop.
+        """
+        return self.axis_greater_than(Axis.{axis.enum_member}, threshold, loop)
+
+    def {axis.stem}_less_than(
+        self, threshold: float, loop: EventLoop | None = None
+    ):
+        """Create a trigger when the {axis.label} is below a threshold.
+
+        :param threshold: Maximum value for activation.
+        :param loop: Event loop; defaults to this scheduler's default loop.
+        """
+        return self.axis_less_than(Axis.{axis.enum_member}, threshold, loop)

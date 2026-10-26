@@ -1,0 +1,65 @@
+    def {button.method}(
+        self, inverted: bool = False, loop: EventLoop | None = None
+    ):
+        """Create a trigger for the {button.label} signal.
+
+        :param inverted: Whether to invert the trigger.
+        :param loop: Event loop; defaults to this scheduler's default loop.
+        """
+        return self._hid.button(
+            Button.{button.enum_member}.value, inverted, self._event_loop(loop)
+        )
+
+    def {button.method}_pressed(self, loop: EventLoop | None = None):
+        """Create an event for when the {button.label} is pressed.
+
+        :param loop: Event loop; defaults to this scheduler's default loop.
+        """
+        return self._hid.button_pressed(
+            Button.{button.enum_member}.value, self._event_loop(loop)
+        )
+
+    def {button.method}_released(self, loop: EventLoop | None = None):
+        """Create an event for when the {button.label} is released.
+
+        :param loop: Event loop; defaults to this scheduler's default loop.
+        """
+        return self._hid.button_released(
+            Button.{button.enum_member}.value, self._event_loop(loop)
+        )
+
+    def get_{button.stem}(self) -> bool:
+        """Read whether the {button.label} is down.
+
+        :returns: Whether the button is currently pressed.
+        """
+        return self._controller.get_button(Button.{button.enum_member})
+
+    @property
+    def {button.stem}_down(self) -> bool:
+        """Whether the {button.label} is currently down."""
+        return self._controller.get_button(Button.{button.enum_member})
+
+    def get_{button.stem}_pressed(self) -> bool:
+        """Whether the {button.label} was pressed since the last check.
+
+        :returns: Whether the button was newly pressed.
+        """
+        return self._controller.get_button_pressed(Button.{button.enum_member})
+
+    @property
+    def {button.stem}_pressed(self) -> bool:
+        """Whether the {button.label} was pressed since the last check."""
+        return self._controller.get_button_pressed(Button.{button.enum_member})
+
+    def get_{button.stem}_released(self) -> bool:
+        """Whether the {button.label} was released since the last check.
+
+        :returns: Whether the button was newly released.
+        """
+        return self._controller.get_button_released(Button.{button.enum_member})
+
+    @property
+    def {button.stem}_released(self) -> bool:
+        """Whether the {button.label} was released since the last check."""
+        return self._controller.get_button_released(Button.{button.enum_member})

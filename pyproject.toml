@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling"]
 build-backend = "hatchling.build"
+requires = [ "hatchling" ]
 
 [project]
 name = "commands3"
@@ -9,25 +9,112 @@ description = "Python port of WPILib Commands v3"
 readme = "README.md"
 license = "BSD-3-Clause"
 requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 dependencies = [
-    "robotpy>=2027.0.0a7",
+    "robotpy[commands2]>=2027.0.0a7",
     "wpilib>=2027.0.0a7",
 ]
 
 [dependency-groups]
 dev = [
+    "basedpyright>=1.40.2",
+    "docformatter>=1.7.8",
+    "pre-commit>=4.7",
+    "pyproject-fmt>=2.30.3",
     "pytest>=8",
+    "pyupgrade>=3.22.0",
     "ruff>=0.16.7",
     "ty>=0.0.81",
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["commands3"]
-
-[tool.pytest.ini_options]
-# The fast suite only. The simulation suite lives in `simtests/tests` and is
-# run through `robotpy test`, which needs its own plugin - see CLAUDE.md.
-testpaths = ["tests"]
+[tool.hatch]
+build.targets.wheel.packages = [ "commands3" ]
 
 [tool.uv]
 prerelease = "allow"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+indent-width = 4
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+format.indent-style = "space"
+format.quote-style = "double"
+format.line-ending = "auto"
+format.skip-magic-trailing-comma = false
+format.docstring-code-line-length = "dynamic"
+format.docstring-code-format = true
+lint.select = [ "E", "F", "I001" ]
+lint.ignore = []
+lint.fixable = [ "ALL" ]
+lint.unfixable = []
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.docformatter]
+recursive = false
+black = true
+force-wrap = true
+blank = true
+
+[tool.pyproject-fmt]
+column_width = 88
+indent = 4
+keep_full_version = false
+max_supported_python = "3.14"
+
+[tool.mypy]
+mypy_path = "."
+explicit_package_bases = true
+ignore_missing_imports = true
+python_version = "3.13"
+warn_unused_ignores = true
+warn_no_return = true
+warn_unused_configs = true
+overrides = [ { module = [ "untyped_package.*" ], follow_untyped_imports = true } ]
+
+[tool.pyright]
+venv = ".venv"
+venvPath = "."
+typeCheckingMode = "standard"
+exclude = [ "examples" ]
+reportUndefinedVariable = "none"
+reportUnusedFunction = "none"
+reportUnusedImport = "none"
+reportUnusedVariable = "none"
+
+[tool.pytest]
+# The fast suite only. The simulation suite lives in `simtests/tests` and is
+# run through `robotpy test`, which needs its own plugin - see CLAUDE.md.
+ini_options.testpaths = [ "tests" ]
